@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GoLocal | Descubre Calvillo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --cream:#F8F5F2;
+      --stone:#E5E3DF;
+      --sage:#A3B2A0;
+      --charcoal:#313131;
+      --accent:#F7A072;
+      --glass: rgba(255,255,255,0.65);
+      --card: #FFFFFF;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%; margin:0; font-family:'Lato',sans-serif; background:#f3f3f3; color:var(--charcoal);}
+
+    /* HERO BACKGROUND - paisaje estilo Calvillo */
+    .hero {
+      background-image: url("https://source.unsplash.com/1600x900/?landscape,mountains,orchard");
+      background-size: cover;
+      background-position: center;
+      padding: 48px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      text-align:center;
+      position:relative;
+    }
+    .hero::after{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.15));
+      pointer-events:none;
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:1000;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:1rem;
+      padding:0.6rem 1rem;
+      background: linear-gradient(180deg, rgba(248,245,242,0.95), rgba(229,227,223,0.9));
+      backdrop-filter: blur(4px);
+    }
+
+    .logo {
+      display:flex;
+      align-items:center;
+      gap:0.6rem;
+      font-family:'Montserrat',sans-serif;
+      font-weight:700;
+      color:var(--charcoal);
+      font-size:1.05rem;
+    }
+    .logo .icon { font-size:1.4rem; color:var(--sage); }
+
+    .controls { display:flex; gap:0.5rem; align-items:center; }
+
+    .btn, .lang-btn {
+      border: none;
+      background: var(--sage);
+      color: white;
+      padding:0.45rem 0.6rem;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:700;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+    .btn.secondary { background:transparent; color:var(--charcoal); border:1px solid rgba(0,0,0,0.06); font-weight:600; }
+
+    /* Main hero content */
+    .hero-content{
+      position:relative; z-index:2; color:white; max-width:1100px; width:100%;
+      display:flex; flex-direction:column; gap:12px; align-items:center; padding:36px 18px;
+    }
+    .hero h1{ margin:0; font-family:'Montserrat',sans-serif; font-size:2rem; letter-spacing:0.4px; }
+    .hero p{ margin:0; opacity:0.95; max-width:900px; }
+
+    .search {
+      margin-top:8px;
+      display:flex; gap:8px; width:100%; max-width:680px;
+    }
+    .search input{
+      flex:1; padding:10px 12px; border-radius:10px; border: none; outline:none;
+      background: rgba(255,255,255,0.9); font-weight:600;
+    }
+    .search button{ padding:10px 14px; border-radius:10px; border:none; cursor:pointer; background:var(--accent); color:white; font-weight:700; }
+
+    main { padding:28px 18px 80px; display:flex; gap:28px; flex-direction:column; align-items:center; }
+
+    /* Grid of category buttons */
+    .menu-grid {
+      width:100%; max-width:1100px;
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap:14px;
+      margin-top:6px;
+    }
+
+    .cat {
+      display:flex; flex-direction:column; gap:8px; align-items:center; justify-content:center;
+      padding:18px; border-radius:14px; color:white; text-decoration:none; font-weight:800;
+      box-shadow:0 6px 18px rgba(0,0,0,0.08); cursor:pointer; border: none;
+      transition: transform .18s ease, box-shadow .18s ease;
+      min-height:110px;
+    }
+    .cat:active{ transform: translateY(1px) scale(.998); }
+    .cat:hover{ transform: translateY(-6px) scale(1.02); box-shadow:0 18px 36px rgba(0,0,0,0.12); }
+
+    /* category colors */
+    .c-food { background: linear-gradient(135deg,#F6A06D,#F29A9A); }
+    .c-eat { background: linear-gradient(135deg,#F28C8C,#F7A072); }
+    .c-nature { background: linear-gradient(135deg,#7EC8E3,#6BB7D9); }
+    .c-water { background: linear-gradient(135deg,#6FC3D2,#50B1C6); }
+    .c-stay { background: linear-gradient(135deg,#C89ACC,#B982C2); }
+    .c-sweet { background: linear-gradient(135deg,#F3C6E8,#F6A8D2); }
+    .c-place { background: linear-gradient(135deg,#A3B2A0,#7C9A8A); }
+    .c-fun { background: linear-gradient(135deg,#F0B46A,#F2D5A1); }
+    .c-market { background: linear-gradient(135deg,#FFD79B,#FFC28B); }
+    .c-museum { background: linear-gradient(135deg,#D6E3F3,#BBD9F0); }
+
+    .cat .emoji { font-size:1.6rem; opacity:0.95; }
+    .cat .title { font-size:1rem; text-align:center; }
+
+    /* Cards */
+    .cards { width:100%; max-width:1100px; display:grid; gap:14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top:6px; }
+    .card { background:var(--card); border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.06); overflow:hidden; display:flex; flex-direction:column; }
+    .card img{ width:100%; height:150px; object-fit:cover; display:block; }
+    .card .body{ padding:12px 14px; display:flex; flex-direction:column; gap:8px; }
+    .card h3{ margin:0; font-size:1.05rem; }
+    .card p{ margin:0; color:#555; font-size:0.95rem; }
+
+    /* Modal */
+    .modal {
+      position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:1500;
+      background: rgba(0,0,0,0.55); padding:20px;
+    }
+    .modal[open]{ display:flex; }
+    .modal-content{
+      width:100%; max-width:880px; background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(249,249,249,0.98));
+      border-radius:12px; overflow:hidden; box-shadow:0 18px 60px rgba(0,0,0,0.35);
+      display:grid; grid-template-columns: 1fr 340px; gap:0;
+    }
+    .modal-left{ padding:18px 20px; }
+    .modal-left h2{ margin:0 0 8px 0; }
+    .modal-left p{ color:#374151; line-height:1.45; }
+    .modal-media img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .modal-right { padding:14px; background:linear-gradient(180deg, rgba(242,242,242,0.9), rgba(232,232,232,0.9)); display:flex; flex-direction:column; gap:10px; }
+    .close-btn{ border:none; background:transparent; font-size:1.1rem; justify-self:flex-end; cursor:pointer; }
+    .modal-actions { margin-top:auto; display:flex; gap:8px; flex-direction:column; }
+    .modal .small { font-size:0.9rem; color:#444; opacity:0.9; }
+
+    footer {
+      margin-top:18px; padding:18px; width:100%;
+      display:flex; justify-content:center; align-items:center; gap:12px;
+      background:linear-gradient(180deg, rgba(229,227,223,0.9), rgba(248,245,242,0.9));
+      flex-direction:column;
+    }
+
+    .lang-toggle { display:flex; gap:6px; align-items:center; }
+
+    /* Dark mode */
+    .dark {
+      --cream:#1e1e1e;
+      --stone:#2b2b2b;
+      --sage:#7b9a86;
+      --charcoal:#eaeaea;
+      --glass: rgba(20,20,20,0.6);
+      background:#111;
+      color:var(--charcoal);
+    }
+    body.dark header{ background: linear-gradient(180deg, rgba(20,20,20,0.9), rgba(35,35,35,0.9)); }
+    body.dark footer{ background: linear-gradient(180deg, rgba(20,20,20,0.9), rgba(35,35,35,0.9)); }
+    body.dark .modal-content{ background: linear-gradient(180deg, rgba(20,20,20,0.95), rgba(32,32,32,0.95)); color:var(--charcoal); }
+    body.dark .card p, body.dark .modal-left p{ color: #ddd; }
+
+    @media (max-width:880px){
+      .modal-content{ grid-template-columns: 1fr; max-height:90vh; overflow:auto; }
+      header{ padding:10px; }
+      .hero h1{ font-size:1.6rem; }
+    }
+  </style>
+</head>
+<body id="body">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo" aria-label="GoLocal Calvillo">
+      <span class="icon">🧭</span>
+      <div>
+        <div style="font-size:0.9rem;">GoLocal</div>
+        <div style="font-size:0.72rem; color:rgba(0,0,0,0.6)">Calvillo</div>
+      </div>
+    </div>
+
+    <div class="controls" role="toolbar" aria-label="Controls">
+      <div class="lang-toggle" title="Cambiar idioma">
+        <button class="lang-btn" id="btn-es">ES</button>
+        <button class="lang-btn" id="btn-en">EN</button>
+      </div>
+      <button class="btn" id="darkToggle" title="Modo oscuro">🌙</button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-content">
+      <h1 id="hero-title">¿Qué quieres descubrir en Calvillo?</h1>
+      <p id="hero-desc">Explora gastronomía, naturaleza, historia y los rincones más bonitos de este Pueblo Mágico.</p>
+
+      <div class="search" role="search" aria-label="Buscar">
+        <input id="searchInput" placeholder="Busca: taquería, cabaña, cascada..." />
+        <button id="searchBtn">Buscar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN -->
+  <main>
+    <!-- GRID BOTONES -->
+    <section aria-label="Menú principal" class="menu-grid" id="menuGrid">
+      <!-- Buttons open modals -->
+      <button class="cat c-food" data-key="taquerias"><span class="emoji">🌮</span><div class="title" data-i18n="taquerias">Taquerías</div></button>
+      <button class="cat c-eat" data-key="restaurantes"><span class="emoji">🍴</span><div class="title" data-i18n="restaurantes">Restaurantes</div></button>
+      <button class="cat c-nature" data-key="cascadas"><span class="emoji">🏞</span><div class="title" data-i18n="cascadas">Cascadas</div></button>
+      <button class="cat c-water" data-key="presas"><span class="emoji">💧</span><div class="title" data-i18n="presas">Presas</div></button>
+      <button class="cat c-stay" data-key="cabanas"><span class="emoji">🏡</span><div class="title" data-i18n="cabanas">Cabañas</div></button>
+      <button class="cat c-stay" data-key="hoteles"><span class="emoji">🏨</span><div class="title" data-i18n="hoteles">Hoteles</div></button>
+      <button class="cat c-fun" data-key="turismo"><span class="emoji">🌟</span><div class="title" data-i18n="lo_turistico">Lo más turístico</div></button>
+      <button class="cat c-sweet" data-key="dulces"><span class="emoji">🍬</span><div class="title" data-i18n="dulces">Dulces típicos</div></button>
+      <button class="cat c-place" data-key="plaza"><span class="emoji">🏛</span><div class="title" data-i18n="plaza">Plaza de Calvillo</div></button>
+      <button class="cat c-water" data-key="albercas"><span class="emoji">🏊</span><div class="title" data-i18n="albercas">Parques acuáticos</div></button>
+      <button class="cat c-market" data-key="mercados"><span class="emoji">🛍</span><div class="title" data-i18n="mercados">Mercados</div></button>
+      <button class="cat c-eat" data-key="panaderias"><span class="emoji">🍞</span><div class="title" data-i18n="panaderias">Panaderías</div></button>
+      <button class="cat c-museum" data-key="museo"><span class="emoji">🏛️</span><div class="title" data-i18n="museo">Museo</div></button>
+      <button class="cat c-eat" data-key="pizzeria"><span class="emoji">🍕</span><div class="title" data-i18n="pizzeria">Pizzería La Esquina</div></button>
+      <button class="cat c-place" data-key="historia"><span class="emoji">📜</span><div class="title" data-i18n="historia">Historia</div></button>
+    </section>
+
+    <!-- TARJETAS DESTACADAS -->
+    <section class="cards" aria-label="Lugares destacados">
+      <article class="card">
+        <img src="https://source.unsplash.com/600x400/?waterfall,nature" alt="Cascada representativa">
+        <div class="body">
+          <h3 data-i18n="card1_title">Cascada El Salto</h3>
+          <p data-i18n="card1_desc">Un lugar ideal para caminatas, fotos y disfrutar del sonido del agua entre pinos.</p>
+          <button class="btn" onclick="openModal('cascadas')">Ver</button>
+        </div>
+      </article>
+
+      <article class="card">
+        <img src="https://source.unsplash.com/600x400/?hotel,boutique" alt="Hotel representativo">
+        <div class="body">
+          <h3 data-i18n="card2_title">Hotel Boutique</h3>
+          <p data-i18n="card2_desc">Alojamiento con encanto local, perfecto para descansar y probar la gastronomía regional.</p>
+          <button class="btn" onclick="openModal('hoteles')">Ver</button>
+        </div>
+      </article>
+
+      <article class="card">
+        <img src="https://source.unsplash.com/600x400/?food,streetfood" alt="Comida representativa">
+        <div class="body">
+          <h3 data-i18n="card3_title">Sabores de Calvillo</h3>
+          <p data-i18n="card3_desc">Empanadas de guayaba, antojitos y pizzerías artesanales: la comida es protagonista.</p>
+          <button class="btn" onclick="openModal('restaurantes')">Ver</button>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <!-- MODAL -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-content" role="document">
+      <div style="position:relative;">
+        <div class="modal-media" id="modalMedia" style="height:100%; min-height:240px;">
+          <img id="modalImg" src="https://source.unsplash.com/800x600/?travel" alt="">
+        </div>
+      </div>
+      <div class="modal-left">
+        <button class="close-btn" aria-label="Cerrar" id="modalClose">✕</button>
+        <h2 id="modalTitle">Título</h2>
+        <p id="modalText">Descripción larga...</p>
+        <p class="small" id="modalExtra"></p>
+      </div>
+      <div class="modal-right">
+        <div class="small" id="modalInfo">Información práctica</div>
+        <div class="modal-actions">
+          <a id="modalLink" class="btn" target="_blank" rel="noopener">Abrir en Google</a>
+          <button class="btn secondary" onclick="closeModal()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div style="font-weight:700">Contacto & Redes</div>
+    <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+      <a href="mailto:info@golocalcalvillo.com">✉️ info@golocalcalvillo.com</a>
+      <a href="tel:+524491234567">📞 +52 449 123 4567</a>
+      <a href="https://facebook.com" target="_blank">Facebook</a>
+      <a href="https://instagram.com" target="_blank">Instagram</a>
+      <a href="https://maps.google.com" target="_blank">Ver en mapa</a>
+    </div>
+    <div style="font-size:0.85rem; opacity:0.9">&copy; 2025 GoLocal Calvillo — Hecho con ♥</div>
+  </footer>
+
+<script>
+/* ====== Datos multilenguaje y contenido de modales ====== */
+const content = {
+  es: {
+    heroTitle: "¿Qué quieres descubrir en Calvillo?",
+    heroDesc: "Explora gastronomía, naturaleza, historia y los rincones más bonitos de este Pueblo Mágico.",
+    searchPlaceholder: "Busca: taquería, cabaña, cascada...",
+    taquerias: {
+      title: "Taquerías de Calvillo",
+      img: "https://source.unsplash.com/900x600/?tacos,mexico",
+      text: "Calvillo y sus alrededores cuentan con opciones de taquerías donde encontrarás tacos al pastor, de barbacoa y guisados caseros. Recomendamos preguntar por los ingredientes locales y horarios.",
+      extra: "Consejo: prueba los tacos con salsas locales y acompáñalos con aguas frescas.",
+      link: "https://www.google.com/search?q=taquerias+calvillo"
+    },
+    restaurantes: {
+      title: "Restaurantes y comida local",
+      img: "https://source.unsplash.com/900x600/?restaurant,mexicanfood",
+      text: "Desde restaurantes familiares hasta propuestas contemporáneas; disfruta empanadas de guayaba, platos regionales y cocina tradicional. Muchas opciones ofrecen platillos elaborados con productos locales.",
+      extra: "Horario común: 9:00 – 22:00 (varía por lugar).",
+      link: "https://www.google.com/search?q=restaurantes+en+calvillo"
+    },
+    cascadas: {
+      title: "Cascadas y rutas naturales",
+      img: "https://source.unsplash.com/900x600/?waterfall",
+      text: "La zona alberga cascadas y senderos ideales para caminatas. Lleva calzado cómodo, agua y respeta las áreas naturales.",
+      extra: "Nivel: fácil a moderado. Lleva cámara para fotos.",
+      link: "https://www.google.com/search?q=cascadas+de+calvillo"
+    },
+    presas: {
+      title: "Presas y espejos de agua",
+      img: "https://source.unsplash.com/900x600/?lake",
+      text: "Las presas cercanas ofrecen paisajes tranquilos y actividades recreativas. Perfectas para picnic y fotografía.",
+      extra: "Consulta accesos y horarios antes de ir.",
+      link: "https://www.google.com/search?q=presas+calvillo"
+    },
+    cabanas: {
+      title: "Cabañas rurales",
+      img: "https://source.unsplash.com/900x600/?cabin,forest",
+      text: "Cabañas rodeadas de naturaleza para desconectar. Ideales para fines de semana en pareja o familia.",
+      extra: "Reserva con anticipación en temporadas altas.",
+      link: "https://www.google.com/search?q=caba%C3%B1as+calvillo"
+    },
+    hoteles: {
+      title: "Hoteles y hospedaje",
+      img: "https://source.unsplash.com/900x600/?hotel,boutique",
+      text: "Opciones de hospedaje desde económicas hasta boutique. Revisa opiniones y servicios como desayuno incluido y estacionamiento.",
+      extra: "Pregunta por tarifas y servicios especiales.",
+      link: "https://www.google.com/search?q=hoteles+calvillo"
+    },
+    turismo: {
+      title: "Lo más turístico",
+      img: "https://source.unsplash.com/900x600/?tourism,mexico",
+      text: "Lugares destacados: Plaza central, museos locales, rutas naturales y festivales. Consulta agendas locales para eventos y ferias.",
+      extra: "Eventos especiales: Feria del Guayabo (fecha variable).",
+      link: "https://www.google.com/search?q=turismo+calvillo"
+    },
+    dulces: {
+      title: "Dulces típicos",
+      img: "https://source.unsplash.com/900x600/?sweets,candy",
+      text: "Calvillo es famoso por sus dulces y conservas, especialmente de guayaba. Busca producciones artesanales en mercados y tiendas locales.",
+      extra: "Lleva espacio en la maleta: ¡son perfectos de souvenir!",
+      link: "https://www.google.com/search?q=dulces+calvillo"
+    },
+    plaza: {
+      title: "Plaza de Calvillo",
+      img: "https://source.unsplash.com/900x600/?townsquare,plaza",
+      text: "El corazón del pueblo: arquitectura colonial, cafés, y vida local. Ideal para recorrer a pie y disfrutar de eventos.",
+      extra: "Perfecta para fotos al atardecer.",
+      link: "https://www.google.com/search?q=la+plaza+calvillo"
+    },
+    albercas: {
+      title: "Parques acuáticos",
+      img: "https://source.unsplash.com/900x600/?waterpark,pool",
+      text: "Diversión para toda la familia en parques acuáticos y albercas cercanas. Consulta medidas de seguridad y costos de entrada.",
+      extra: "Lleva protector solar y toalla.",
+      link: "https://www.google.com/search?q=albercas+en+calvillo"
+    },
+    mercados: {
+      title: "Mercados locales",
+      img: "https://source.unsplash.com/900x600/?market,local",
+      text: "Mercados con productos frescos, artesanías y comida típica. Además son excelentes para conocer la vida local.",
+      extra: "Pregunta por productos locales y precios.",
+      link: "https://www.google.com/search?q=mercado+calvillo"
+    },
+    panaderias: {
+      title: "Panaderías y repostería",
+      img: "https://source.unsplash.com/900x600/?bakery,bread",
+      text: "Pan artesanal, panes de horno tradicionales y con sabores de la región. Ideales para desayunos y snacks.",
+      extra: "Prueba panes rellenos y dulces locales.",
+      link: "https://www.google.com/search?q=panaderias+calvillo"
+    },
+    museo: {
+      title: "Museo de Pueblos Mágicos",
+      img: "https://source.unsplash.com/900x600/?museum,history",
+      text: "Museo con piezas locales y exposición sobre la historia y tradiciones del pueblo. Excelente para entender el contexto cultural.",
+      extra: "Revisa horarios y precios de entrada.",
+      link: "https://www.google.com/search?q=Museo+Calvillo"
+    },
+    pizzeria: {
+      title: "Pizzería La Esquina",
+      img: "https://source.unsplash.com/900x600/?pizza,restaurant",
+      text: "Pizzería artesanal muy querida por locales y visitantes. Masa casera, ingredientes frescos y ambiente acogedor.",
+      extra: "Horario: 13:00 - 22:00 (verificar). Recomendación: pizza con guayaba y queso (si la ofrecen).",
+      link: "https://www.google.com/search?q=pizzeria+la+esquina+calvillo"
+    },
+    historia: {
+      title: "Historia de Calvillo",
+      img: "https://source.unsplash.com/900x600/?colonial,building",
+      text: "Calvillo, fundado en el siglo XVIII, es un pueblo con profundas raíces agrícolas y tradiciones. Conocido por sus guayabos y las conservas de guayaba, la región creció alrededor de la agricultura. El centro histórico conserva fachadas coloniales, la plaza principal y templos tradicionales. Las festividades locales y la Feria del Guayabo muestran la gastronomía, música y artesanía típicas de la comunidad.",
+      extra: "Datos: Ubicación - Aguascalientes; Actividades tradicionales: Feria del Guayabo, elaboración de dulces artesanales.",
+      link: "https://www.google.com/search?q=historia+calvillo"
+    }
+  },
+
+  en: {
+    heroTitle: "What do you want to discover in Calvillo?",
+    heroDesc: "Explore gastronomy, nature, history and the most beautiful corners of this Magical Town.",
+    searchPlaceholder: "Search: taco, cabin, waterfall...",
+    taquerias: {
+      title: "Taquerías of Calvillo",
+      img: "https://source.unsplash.com/900x600/?tacos,mexico",
+      text: "Calvillo and nearby areas offer taquerías where you can enjoy tacos al pastor, barbacoa and homemade stews. Ask about local ingredients and opening hours.",
+      extra: "Tip: try the tacos with local salsas and fresh aguas.",
+      link: "https://www.google.com/search?q=taquerias+calvillo"
+    },
+    restaurantes: {
+      title: "Restaurants & Local Food",
+      img: "https://source.unsplash.com/900x600/?restaurant,mexicanfood",
+      text: "From family restaurants to contemporary proposals; enjoy guava empanadas, regional dishes, and traditional cuisine. Many places use local products.",
+      extra: "Common hours: 9:00 – 22:00 (varies).",
+      link: "https://www.google.com/search?q=restaurantes+en+calvillo"
+    },
+    cascadas: {
+      title: "Waterfalls & Natural Trails",
+      img: "https://source.unsplash.com/900x600/?waterfall",
+      text: "The area has waterfalls and trails perfect for hikes. Wear comfortable shoes, bring water and respect nature areas.",
+      extra: "Difficulty: easy to moderate. Great photo spots.",
+      link: "https://www.google.com/search?q=cascadas+de+calvillo"
+    },
+    presas: {
+      title: "Dams & Lakes",
+      img: "https://source.unsplash.com/900x600/?lake",
+      text: "Nearby dams offer peaceful landscapes and recreational activities. Great for picnics and photography.",
+      extra: "Check access and hours before visiting.",
+      link: "https://www.google.com/search?q=presas+calvillo"
+    },
+    cabanas: {
+      title: "Rural Cabins",
+      img: "https://source.unsplash.com/900x600/?cabin,forest",
+      text: "Cabins surrounded by nature to disconnect—perfect for weekend getaways with family or couples.",
+      extra: "Book in advance during high season.",
+      link: "https://www.google.com/search?q=caba%C3%B1as+calvillo"
+    },
+    hoteles: {
+      title: "Hotels & Lodging",
+      img: "https://source.unsplash.com/900x600/?hotel,boutique",
+      text: "Options range from budget hotels to boutique stays. Check reviews and amenities like breakfast and parking.",
+      extra: "Ask about special rates and services.",
+      link: "https://www.google.com/search?q=hoteles+calvillo"
+    },
+    turismo: {
+      title: "Top Tourist Spots",
+      img: "https://source.unsplash.com/900x600/?tourism,mexico",
+      text: "Highlights: central square, local museums, natural routes and festivals. Check local calendars for events and fairs.",
+      extra: "Special events: Guava Fair (dates vary).",
+      link: "https://www.google.com/search?q=turismo+calvillo"
+    },
+    dulces: {
+      title: "Traditional Sweets",
+      img: "https://source.unsplash.com/900x600/?sweets,candy",
+      text: "Calvillo is famous for sweets and preserves, especially guava. Look for artisanal products in markets and shops.",
+      extra: "They make great souvenirs!",
+      link: "https://www.google.com/search?q=dulces+calvillo"
+    },
+    plaza: {
+      title: "Calvillo Square",
+      img: "https://source.unsplash.com/900x600/?townsquare,plaza",
+      text: "The town's heart: colonial architecture, cafés, and local life. Perfect for walking and enjoying events.",
+      extra: "Great for sunset photos.",
+      link: "https://www.google.com/search?q=la+plaza+calvillo"
+    },
+    albercas: {
+      title: "Water Parks & Pools",
+      img: "https://source.unsplash.com/900x600/?waterpark,pool",
+      text: "Family fun at nearby water parks and pools. Check safety measures and entrance fees.",
+      extra: "Bring sunscreen and towel.",
+      link: "https://www.google.com/search?q=albercas+en+calvillo"
+    },
+    mercados: {
+      title: "Local Markets",
+      img: "https://source.unsplash.com/900x600/?market,local",
+      text: "Markets with fresh products, crafts and typical food. Great to immerse in local life.",
+      extra: "Ask for local specialties and prices.",
+      link: "https://www.google.com/search?q=mercado+calvillo"
+    },
+    panaderias: {
+      title: "Bakeries & Pastries",
+      img: "https://source.unsplash.com/900x600/?bakery,bread",
+      text: "Artisanal bread and oven-baked goods. Perfect for breakfast and snacks.",
+      extra: "Try filled breads and local sweets.",
+      link: "https://www.google.com/search?q=panaderias+calvillo"
+    },
+    museo: {
+      title: "Local Museum",
+      img: "https://source.unsplash.com/900x600/?museum,history",
+      text: "Museum with local pieces and exhibits about the town's history and traditions. Great to learn about the region.",
+      extra: "Check hours and admission fees.",
+      link: "https://www.google.com/search?q=Museo+Calvillo"
+    },
+    pizzeria: {
+      title: "Pizzería La Esquina",
+      img: "https://source.unsplash.com/900x600/?pizza,restaurant",
+      text: "A beloved artisanal pizzeria: handmade dough, fresh ingredients and cozy atmosphere. Popular with locals.",
+      extra: "Hours: 13:00 - 22:00 (confirm). Try their special pizzas.",
+      link: "https://www.google.com/search?q=pizzeria+la+esquina+calvillo"
+    },
+    historia: {
+      title: "History of Calvillo",
+      img: "https://source.unsplash.com/900x600/?history,colonial",
+      text: "Founded in the 18th century, Calvillo grew around agriculture—especially guava cultivation. The town preserves colonial facades, temples and traditions. The annual Guava Fair showcases music, food and local crafts, celebrating the agricultural roots and community identity.",
+      extra: "Location: Aguascalientes. Key traditions: Guava Fair, artisanal sweets production.",
+      link: "https://www.google.com/search?q=historia+calvillo"
+    }
+  }
+};
+
+/* ====== Inicialización de UI y traducción ====== */
+const langButtons = { es: document.getElementById('btn-es'), en: document.getElementById('btn-en') };
+const body = document.getElementById('body');
+const heroTitle = document.getElementById('hero-title');
+const heroDesc = document.getElementById('hero-desc');
+const searchInput = document.getElementById('searchInput');
+const searchBtn = document.getElementById('searchBtn');
+
+let currentLang = localStorage.getItem('golocal_lang') || 'es';
+let darkOn = localStorage.getItem('golocal_dark') === 'true';
+
+// Aplica modo oscuro desde storage
+if (darkOn) document.documentElement.classList.add('dark'), body.classList.add('dark'), document.body.classList.add('dark');
+
+// Función para aplicar idioma a la UI
+function applyLanguage(lang){
+  currentLang = lang;
+  localStorage.setItem('golocal_lang', lang);
+  const d = content[lang];
+  heroTitle.textContent = d.heroTitle;
+  heroDesc.textContent = d.heroDesc;
+  searchInput.placeholder = d.searchPlaceholder;
+
+  // Cambiar texto en botones y tarjetas por atributo data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.getAttribute('data-i18n');
+    if(key && d[key]) el.textContent = d[key];
+  });
+}
+applyLanguage(currentLang);
+
+// Eventos de cambio de idioma
+langButtons.es.addEventListener('click', ()=> applyLanguage('es'));
+langButtons.en.addEventListener('click', ()=> applyLanguage('en'));
+
+/* ====== Mapeo de modales y apertura ====== */
+const modal = document.getElementById('modal');
+const modalTitle = document.getElementById('modalTitle');
+const modalImg = document.getElementById('modalImg');
+const modalText = document.getElementById('modalText');
+const modalExtra = document.getElementById('modalExtra');
+const modalLink = document.getElementById('modalLink');
+const modalClose = document.getElementById('modalClose');
+
+function openModal(key){
+  const lang = currentLang;
+  const item = content[lang][key];
+  if(!item) return;
+  modalTitle.textContent = item.title;
+  modalImg.src = item.img;
+  modalImg.alt = item.title;
+  modalText.textContent = item.text;
+  modalExtra.textContent = item.extra;
+  modalLink.href = item.link;
+  modalLink.textContent = (lang === 'es') ? 'Abrir en Google' : 'Open in Google';
+  modal.setAttribute('open','');
+  modal.setAttribute('aria-hidden','false');
+  document.body.style.overflow = 'hidden';
+}
+
+// Botones del grid
+document.querySelectorAll('.menu-grid .cat').forEach(btn=>{
+  btn.addEventListener('click', ()=> {
+    const key = btn.getAttribute('data-key');
+    openModal(key);
+  });
+});
+
+// Botones "Ver" en tarjetas
+document.querySelectorAll('.card .btn').forEach(b=>{
+  b.addEventListener('click', (e)=>{
+    // el onclick establece la key en el HTML; si no, abre restaurantes por defecto
+    const key = e.target.getAttribute('data-key') || b.getAttribute('data-key') || 'turismo';
+    openModal(key);
+  });
+});
+
+// Cerrar modal
+function closeModal(){
+  modal.removeAttribute('open');
+  modal.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+}
+modalClose.addEventListener('click', closeModal);
+modal.addEventListener('click', (e)=> { if(e.target === modal) closeModal(); });
+
+/* ====== Search: filtrar botones por texto y permitir abrir Google en nueva pestaña si el usuario lo desea ====== */
+searchBtn.addEventListener('click', () => {
+  const q = searchInput.value.trim();
+  if(!q) {
+    // limpiar filtro: mostrar todos
+    document.querySelectorAll('.menu-grid .cat').forEach(el=> el.style.display = '');
+    return;
+  }
+  // filtrar show/hide
+  const ql = q.toLowerCase();
+  document.querySelectorAll('.menu-grid .cat').forEach(el=>{
+    const title = el.querySelector('.title')?.textContent?.toLowerCase() || '';
+    el.style.display = title.includes(ql) ? '' : 'none';
+  });
+  // también abrimos búsqueda en Google pero en nueva pestaña SOLO si contiene "ir:" al inicio
+  if(q.toLowerCase().startsWith('ir:')) {
+    const term = q.slice(3).trim() + ' calvillo';
+    window.open('https://www.google.com/search?q=' + encodeURIComponent(term), '_blank');
+  }
+});
+
+/* ====== Modo oscuro persistente ====== */
+const darkToggle = document.getElementById('darkToggle');
+darkToggle.addEventListener('click', ()=> {
+  document.body.classList.toggle('dark');
+  document.documentElement.classList.toggle('dark');
+  darkOn = document.body.classList.contains('dark');
+  localStorage.setItem('golocal_dark', darkOn);
+});
+
+/* ====== Inicializar textos en botones que usan data-i18n keys que no están directamente en content (mapear) ====== */
+(function initI18nStatic(){
+  // Mapa de claves simples -> contenido en content[lang]
+  const mapping = {
+    'taquerias':'taquerias','restaurantes':'restaurantes','cascadas':'cascadas','presas':'presas','cabanas':'cabanas',
+    'hoteles':'hoteles','lo_turistico':'turismo','dulces':'dulces','plaza':'plaza','albercas':'albercas','mercados':'mercados',
+    'panaderias':'panaderias','museo':'museo','pizzeria':'pizzeria','historia':'historia',
+    'card1_title':'card1_title','card1_desc':'card1_desc','card2_title':'card2_title','card2_desc':'card2_desc',
+    'card3_title':'card3_title','card3_desc':'card3_desc'
+  };
+  // Si faltan keys en content (cards), añade textos simples
+  content.es.card1_title = "Cascada El Salto";
+  content.es.card1_desc = "Un lugar ideal para caminatas, fotos y disfrutar del sonido del agua.";
+  content.es.card2_title = "Hotel Boutique";
+  content.es.card2_desc = "Alojamiento con encanto local y buena ubicación.";
+  content.es.card3_title = "Sabores de Calvillo";
+  content.es.card3_desc = "Empanadas de guayaba y platos tradicionales que debes probar.";
+
+  content.en.card1_title = "El Salto Waterfall";
+  content.en.card1_desc = "Perfect spot for hikes, photos and enjoying nature's sounds.";
+  content.en.card2_title = "Boutique Hotel";
+  content.en.card2_desc = "Charming lodging with a local touch.";
+  content.en.card3_title = "Flavors of Calvillo";
+  content.en.card3_desc = "Guava empanadas and local dishes you must try.";
+
+  // After defined, apply current language to static i18n attributes used
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.getAttribute('data-i18n');
+    // If matches content[lang] key, will be set by applyLanguage -> to ensure cards are also set:
+    if(!content[currentLang][key] && content[currentLang][key] === undefined){
+      // nothing
+    }
+  });
+  // Finally re-apply language to update these card keys
+  applyLanguage(currentLang);
+})();
+
+/* ====== Extra: Prevención de iframes externos (Google bloquea iframe); los modales mostrarán contenido propio y link externo si se desea ====== */
+/* Ya implementado: modalLink abre Google en pestaña nueva. */
+
+/* ====== Accesibilidad: cerrar modal con ESC ====== */
+document.addEventListener('keydown', (e)=> {
+  if(e.key === 'Escape' && modal.hasAttribute('open')) closeModal();
+});
+</script>
+
+</body>
+</html>
